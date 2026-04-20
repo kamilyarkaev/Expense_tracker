@@ -9,7 +9,7 @@ def log_action(func):
     def wrapper(*args, **kwargs):
         print(f"\n \nExecuting {func.__name__}...")
         result = func(*args, **kwargs)
-        print(f"Finished executing {func.__name__}.")
+        print(f"\nFinished executing {func.__name__}.")
         return result
     return wrapper
 
@@ -18,11 +18,11 @@ def add_expense(target_list,**kwargs):
     target_list.append(kwargs)
 
 
-@log_action
+
 def total(*amounts):
     return sum(amounts)
 
-@log_action
+
 def get_category_summary(expenses):
     category_summary = {}
     for i in expenses:
@@ -35,7 +35,7 @@ def get_category_summary(expenses):
     return category_summary
 
 
-@log_action
+
 def get_total_spent(expenses):
     total_spent = []
     for i in expenses:
@@ -43,7 +43,7 @@ def get_total_spent(expenses):
     return total(*total_spent)
 
 
-@log_action
+
 def most_expensive_purchase(expenses):
     total_spent = []
     for i in expenses:
@@ -53,7 +53,7 @@ def most_expensive_purchase(expenses):
             return i["purcase"], i["price"]
 
 
-@log_action
+
 def least_expensive_purchase(expenses):
     total_spent = []
     for i in expenses:
@@ -65,12 +65,17 @@ def least_expensive_purchase(expenses):
 
 @log_action
 def report(expenses):
-    print("\n \n \n--- Expense Report ---")
+    print("\n \n \n══════════ EXPENSE REPORT ══════════")
+    print("#  Name           Category     Amount")
+    print("────────────────────────────────────────")
     for i in expenses:
-        print(f"Purcase: {i['purcase']}, Price: {i['price']}, Category: {i['category']}")
-    print(f"Most Expensive Purchase: {most_expensive_purchase(expenses)}")
-    print(f"Least Expensive Purchase: {least_expensive_purchase(expenses)}")
-    print(f"Total Spent: {get_total_spent(expenses)}")
+        print(f"i,  {i['purcase']},           {i['category']},     {i['price']}")
+    print("\n📂 BY CATEGORY:")
+    for category, amount in get_category_summary(expenses).items():
+        print(f"{category} -> {amount}")
+    print(f"\n🏆 Biggest     : {most_expensive_purchase(expenses)}")
+    print(f"-cheapest    : {least_expensive_purchase(expenses)}")
+    print(f"💰 Grand Total: {get_total_spent(expenses)}")
 
 
 #The code that the user sees
