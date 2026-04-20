@@ -2,6 +2,7 @@ import functools
 working = True 
 
 #Functions
+
 expenses = []
 def log_action(func):
     @functools.wraps(func)
@@ -15,7 +16,6 @@ def log_action(func):
 @log_action
 def add_expense(target_list,**kwargs):
     target_list.append(kwargs)
-add_expense(expenses, price=100, category="Food", purcase="Groceries")
 
 
 @log_action
@@ -34,86 +34,116 @@ def get_category_summary(expenses):
             category_summary[category] = price
     return category_summary
 
+
+@log_action
+def get_total_spent(expenses):
+    total_spent = []
+    for i in expenses:
+        total_spent.append(i["price"])
+    return total(*total_spent)
+
+
+@log_action
+def most_expensive_purchase(expenses):
+    total_spent = []
+    for i in expenses:
+        total_spent.append(i["price"])
+    for i in expenses:
+        if i["price"] == max(total_spent):
+            return i["purcase"], i["price"]
+
+
+@log_action
+def least_expensive_purchase(expenses):
+    total_spent = []
+    for i in expenses:
+        total_spent.append(i["price"])
+    for i in expenses:
+        if i["price"] == min(total_spent):
+            return i["purcase"], i["price"]
+
+
+@log_action
+def report(expenses):
+    print("\n \n \n--- Expense Report ---")
+    for i in expenses:
+        print(f"Purcase: {i['purcase']}, Price: {i['price']}, Category: {i['category']}")
+    print(f"Most Expensive Purchase: {most_expensive_purchase(expenses)}")
+    print(f"Least Expensive Purchase: {least_expensive_purchase(expenses)}")
+    print(f"Total Spent: {get_total_spent(expenses)}")
+
+
 #The code that the user sees
 while working:
-    print("\n \n  --- Your Expenses ---")
+    print("\n \n  --- Your Expenses Manager ---")
     print("1. Add Expense")
     print("2. Print Report")
-    print("3. Get Category Summary")
-    print("4. Exit")
+    print("3. Print Report And Exit the program")
+    print("4. Get Category Summary")
+    print("5. Exit")
     
-    choice = input("Choose an option: ")
+    choice = input("Choose an option: ").lower()
     
     
-    if choice not in ["1", "2", "3", "4"] and choice.lower() not in ["add expense", "print report", "get category summary", "exit"]:
+    if choice not in ["1", "2", "3", "4", "5"] and choice.lower() not in ["add expense", "print report", "get category summary", "exit"]:
         print("Invalid choice, please select a valid option.")
         continue
     
     
+    match choice:
     ### First option - add expense
-    if choice == "1"or choice.lower() == "add expense":
-        purcase = input("Enter purcase's name: ")
-        price = input("Enter price: ")
-        
-        
-        ##### Price validation
-        
-        
-        if not price.isdigit():
-            while not price.isdigit():
+        case "1" | "add expense":
+            purcase = input("Enter purcase's name: ")
+            price = input("Enter price: ")
+            
+            
+            ##### Price validation
+            
+            
+            if not price.isdigit():
+                while not price.isdigit():
+                    print("Invalid price, please enter a numeric price.")
+                    price = input(f"What is the price of {purcase}?: ")
+                    if price.isdigit():
+                        break
                 print("Invalid price, please enter a numeric price.")
-                price = input(f"What is the price of {purcase}?: ")
-                if price.isdigit():
-                    break
-            print("Invalid price, please enter a numeric price.")
-        price = float(price)
+            price = float(price)
+            
+            #### End of price validation
+            category = input("Enter category: ")
+            add_expense(expenses, price=price, category=category, purcase=purcase)
+            continue
         
-        #### End of price validation
-        category = input("Enter category: ")
-        add_expense(expenses, price=price, category=category, purcase=purcase)
-        continue
-    
 
-    
-    
-    ### second option - print report
-    if choice == "2" or choice.lower() == "print report":
         
-        # Calculate total amount spent
-        total_spent = []
-        for i in expenses:
-            total_spent.append(i["price"])
-        total_amount = float(total(*total_spent))
-        #end
-    
-    
-    
-        print("--- Expense Report ---")
-        for i in expenses:
-            print(f"Purcase: {i['purcase']}, Price: {i['price']}, Category: {i['category']}")
-        print(f"Total Spent: {total_amount}")
-        continue
-    
-    
-    
-    
-    
-    ##### 3rd option - category summary
-    if choice == "3" or choice.lower() == "get category summary":
-        category_summary = get_category_summary(expenses)
-        print("--- Category Summary ---")
-        for category, amount in category_summary.items():
-            print(f"Spent on {category}: {amount}")
-    
-    
-    
-    #### 4th option - exit
-    if choice == "4" or choice.lower() == "exit":
-        print("Exiting the program. Goodbye!")
-        break
-
-
-
-
-
-     
+        
+        ### second option - print report
+        case "2" | "print report":
+        
+        
+            report(expenses)
+            continue
+        
+        
+        ##### 3rd option 
+        case "3" | "print report and exit the program":
+            
+        
+        
+            report(expenses)
+            break
+        
+        
+        ##### 4th option - category summary
+        case "4" | "get category summary":
+            category_summary = get_category_summary(expenses)
+            print("--- Category Summary ---")
+            for category, amount in category_summary.items():
+                print(f"Spent on {category}: {amount}")
+            continue
+        
+        
+        #### 5th option - exit
+        case "5" | "exit":
+            print("Exiting the program. Goodbye!")
+            break
